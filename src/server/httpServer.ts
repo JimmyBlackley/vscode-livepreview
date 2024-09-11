@@ -41,12 +41,18 @@ export class HttpServer extends Disposable {
 		this._defaultHeaders = SettingUtil.GetConfig().httpHeaders;
 
 		this._register(
-			vscode.workspace.onDidChangeConfiguration((e) => {
+			vscode.workspace.onDidChangeConfiguration((e: vscode.ConfigurationChangeEvent) => {
 				if (e.affectsConfiguration(SETTINGS_SECTION_ID)) {
 					this._defaultHeaders = SettingUtil.GetConfig().httpHeaders;
 				}
 			})
 		);
+
+		this._register(
+            vscode.window.onDidChangeActiveTextEditor((editor: vscode.TextEditor | undefined) => {
+                this._handleActiveEditorChange(editor);
+            })
+        );
 	}
 
 	private _unsetDefaultHeaders(): void {
@@ -70,6 +76,28 @@ export class HttpServer extends Disposable {
 		return this._startHttpServer();
 	}
 
+
+	    /**
+     * @description Handle changes in the active text editor.
+     * @param {vscode.TextEditor | undefined} editor The active text editor.
+     */
+		private async _handleActiveEditorChange(editor: vscode.TextEditor | undefined): Promise<void> {
+			if (editor) {
+				const document = editor.document;
+				const fileName = document.fileName;
+				console.log(`Active editor changed to: ${fileName}`);
+	
+				// Check if the file is an HTML file by inspecting the extension
+				if (fileName.endsWith('.html')) {
+					// Trigger the live preview
+					try {
+						await vscode.commands.executeCommand('myExtension.showLivePreview', vscode.Uri.file(fileName));
+					} catch (error) {
+						console.error('Error triggering live preview:', error);
+					}
+				}
+			}
+		}
 	/**
 	 * @description stop the HTTP server.
 	 */

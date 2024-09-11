@@ -19,6 +19,32 @@ let reporter: TelemetryReporter;
 let serverPreview: Manager;
 
 export function activate(context: vscode.ExtensionContext): void {
+	
+	// begin additions
+	// Register the command
+    const disposable = vscode.commands.registerCommand('myExtension.showLivePreview', async (uri: vscode.Uri) => {
+        // Implement the logic to show the live preview
+        // For example, open a webview panel to display the HTML content
+        const panel = vscode.window.createWebviewPanel(
+            'livePreview',
+            'Live Preview',
+            vscode.ViewColumn.Beside,
+            {
+                enableScripts: true
+            }
+        );
+
+        // Read the content of the HTML file
+        const document = await vscode.workspace.openTextDocument(uri);
+        const content = document.getText();
+
+        // Set the HTML content of the webview panel
+        panel.webview.html = content;
+    });
+
+    context.subscriptions.push(disposable);
+	// end additions
+
 	const extPackageJSON = context.extension.packageJSON;
 	reporter = new TelemetryReporter(
 		EXTENSION_ID,

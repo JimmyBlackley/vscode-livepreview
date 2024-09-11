@@ -96,6 +96,10 @@
         "command": "livePreview.start.preview.atFileString",
         "title": "%commands.startServerAtFileString%",
         "category": "%commands.category%"
+      },
+      {
+        "command": "myExtension.showLivePreview",
+        "title": "Show Live Preview"
       }
     ],
     "menus": {
